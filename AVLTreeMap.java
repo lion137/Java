@@ -1,8 +1,6 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class AVLTreeMap<K extends Comparable<K>, V> {
+public class AVLTreeMap<K extends Comparable<K>, V>  {
 
     private Node root;
     private int N;
@@ -65,7 +63,7 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
                 this.right.parent = this;
         }
 
-        private Node findSuccesor() {
+        private Node findSuccessor() {
             Node succ = null;
             if (this.hasRightChild()) {
                 succ = this.right.findMin();
@@ -75,7 +73,7 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
                         succ = this.parent;
                     } else {
                         this.parent.right = null;
-                        succ = this.parent.findSuccesor();
+                        succ = this.parent.findSuccessor();
                         this.parent.right = this;
                     }
                 }
@@ -125,37 +123,66 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
         return this.N;
     }
 
+
     // is empty
 
     public boolean isEmpty() {
         return null == this.root;
     }
 
+    // find min
+    // returns null if empty
+    public K min() {
+        Node node = root;
+        if (null != node) {
+            while (null != node.left) {
+                node = node.left;
+            }
+            return node.key;
+        }
+        else return null;
+    }
+
+    // find max
+    //returns null if empty
+    public K max() {
+        Node node = root;
+        if (null != node) {
+            while (null != node.right) {
+                node = node.right;
+            }
+            return node.key;
+        }
+        else return null;
+    }
+
     // get value
 
     // returns null if not in a tree
+
     public V get(K key) {
-        Node res;
-        if (null != this.root) {
-            res = __get(key, root);
-            if (null != res)
-                return res.val;
-            else
-                return null;
-        } else
-            return null;
+        Node res = root;
+        while  (null != res) {
+            int cmp = key.compareTo(res.key);
+            if (cmp < 0) res = res.left;
+            else if (cmp > 0) res = res.right;
+            else return res.val;
+        }
+        return null;
     }
 
-    //returns null if key not present
     private Node __get(K key, Node x) {
-        if (null == x) return null;
-        int cmp = key.compareTo(x.key);
-        if (cmp < 0) return __get(key, x.left);
-        else if (cmp > 0) return __get(key, x.right);
-        return x;
+        Node res = x;
+        while (null != res) {
+            int cmp = key.compareTo(x.key);
+            if (cmp < 0) res = res.left;
+            else if (cmp > 0) res = res.right;
+            else return res;
+        }
+        return null;
     }
 
-    // contains
+    // contains key
 
     public final boolean contains(K key) {
         if (null != this.__get(key, this.root))
@@ -163,8 +190,7 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
         return false;
     }
 
-    // put value
-
+    // put value, search and add, update if found
     public void put(K key, V val) {
         if (this.root == null) {
             this.root = new Node(key, val, null, null, null);
@@ -175,7 +201,6 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
         ++this.N;
     }
 
-    // search and add, update if found
     private void __put(K key, V val, Node x) {
         int cmp = key.compareTo(x.key);
         if (cmp < 0) {
@@ -232,7 +257,7 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
         }
 
         else if (currentNode.hasBothChildren()) {
-            Node successor = this.root.findSuccesor();
+            Node successor = this.root.findSuccessor();
             successor.spliceOut();
             currentNode.key = successor.key;
             currentNode.val = successor.val;
@@ -347,6 +372,82 @@ public class AVLTreeMap<K extends Comparable<K>, V> {
             }
         }
     }
+    // --------------------------Override-----------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        String b = "[";
+        String o = "";
+        o += b;
+        Node current = this.root;
+        Stack<Node> stack = new Stack<>();
+        boolean isDone = false;
+        int i = 0;
+        while (! isDone) {
+            if (null != current) {
+                stack.push(current);
+                current = current.left;
+            }
+            else {
+                if (! stack.isEmpty()) {
+                    current = stack.pop();
+                    if (i <= this.length() - 2 )
+                        o += current.key + ": " + current.val + ", ";
+                    else
+                        o += current.key + ": " + current.val;
+                    current = current.right;
+                    ++i;
+                }
+                else {
+                    isDone = true;
+                }
+            }
+
+        }
+        o += "]";
+        return o;
+    }
+
+    @Override
+    public int hashCode() {
+        int keyHash = this.root.key == null ? 0 : this.root.key.hashCode();
+        int valueHash = this.root.val == null ? 0 : this.root.val.hashCode();
+        return keyHash ^ valueHash;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof AVLTreeMap))return false;
+        AVLTreeMap e = (AVLTreeMap) other;
+        Node curr = this.root;
+        Node curr1 = e.root;
+        if (this.length() != e.length()) return false;
+        Stack<Node> s = new Stack<>();
+        Stack<Node> v = new Stack<>();
+        boolean isDone = false;
+        while (! isDone) {
+            if ((null != curr) && (null != curr1)) {
+                s.push(curr);
+                v.push(curr1);
+                curr = curr.left;
+                curr1 = curr1.left;
+            }
+            else {
+                if (! s.isEmpty()) {
+                    curr = s.pop();
+                    curr1 = v.pop();
+                    if (! ( (curr.key.equals(curr1.key) && (curr.val.equals(curr1.val)) ))) return false;
+                    curr = curr.right;
+                    curr1 = curr1.right;
+                }
+                else {
+                    isDone = true;
+                }
+            }
+        }
+        return true;
+    }
+
 
 
     // debug functions ----------------------------------------------- debug ------------------------------------------
