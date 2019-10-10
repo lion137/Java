@@ -1,4 +1,5 @@
 package skew_heap;
+import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 
 
@@ -9,38 +10,83 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;*/
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SkewHeapTests {
-    private SkewHeap sk_heap = new SkewHeap(null, null, null);
+    SkewHeap tree = new SkewHeap();
 
     @Test
-    void test_init_null() {
-        assertNotNull(sk_heap);
-        assertTrue(Functions.isEmpty(sk_heap));
-
-        assertNull(sk_heap.leftChild);
-        assertNull(sk_heap.rightChild);
-        assertNull(sk_heap.data);
+    void test_init() {
+        assertNull(tree.root);
     }
 
     @Test
-    void test_merge_both_null() {
-        assertTrue(Functions.isEmpty(Functions.merge(sk_heap, sk_heap)));
+    void test_insert() {
+        tree.insert(1);
+        assertEquals(1, tree.root.data);
     }
 
     @Test
-    void test_insert_to_empty() {
-        Functions op = new Functions();
-        SkewHeap tree1 = op.insert("A", null);
-        assertEquals(tree1.data, "A");
+    void test_pop() {
+        SkewHeap tree = new SkewHeap();
+        tree.insert(5);
+        tree.insert(3);
+        tree.insert(10);
+        assertEquals(tree.pop(), 3);
+        assertEquals(tree.pop(), 5);
+        assertEquals(tree.pop(), 10);
     }
 
     @Test
-    void test_insert_to_non_empty() {
-        Functions op = new Functions();
-        SkewHeap tree1 = op.insert(1, null);
-        tree1 = op.insert(2, tree1);
-        assertEquals(tree1.data, 1);
+    void test_pop_empty_exception() {
+        SkewHeap tree = new SkewHeap();
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            tree.pop();
+        });
+    }
+
+    @Test
+    void test_list_to_heap() {
+        List<Integer> ll = new ArrayList<>();
+        ll.add(3);
+        ll.add(2);
+        ll.add(5);
+        SkewHeap tree = null;
+        tree = Functions.listToHeap(ll);
+        assertEquals(tree.pop(), 2);
+        assertEquals(tree.pop(), 3);
+        assertEquals(tree.pop(), 5);
+    }
+
+    @Test
+    void test_heap_to_list() {
+        SkewHeap tree = null;
+        tree.insert(4);
+        tree.insert(3);
+        tree.insert(5);
+        List<Object> ll = Functions.heapToList(tree);
+        assertEquals(ll.get(0), 3);
+        assertEquals(ll.get(1), 4);
+        assertEquals(ll.get(2), 5);
+    }
+
+    @Test
+    void test_sorted(){
+        List<Integer> ll = new ArrayList<>();
+        ll.add(3);
+        ll.add(2);
+        ll.add(5);
+        ll = Functions.sort(ll);
+        assertEquals(ll.get(0), 2);
+        assertEquals(ll.get(1), 3);
+        assertEquals(ll.get(2), 5);
+    }
+
+    public static void main(String [] args) {
+        System.out.println("Test");
     }
 }
