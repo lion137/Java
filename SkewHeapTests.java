@@ -1,19 +1,7 @@
 package skew_heap;
-import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
-
-
-/*import java.sql.Time;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;*/
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SkewHeapTests {
@@ -86,7 +74,5 @@ public class SkewHeapTests {
         assertEquals(ll.get(2), 5);
     }
 
-    public static void main(String [] args) {
-        System.out.println("Test");
-    }
+
 }

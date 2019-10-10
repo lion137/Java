@@ -4,7 +4,7 @@ package skew_heap;
 import java.util.ArrayList;
 import java.util.List;
 
-class Functions<V extends Comparable<V>> {
+class Functions {
 
     static SkewHeap listToHeap(List list) {
         SkewHeap o = new SkewHeap();

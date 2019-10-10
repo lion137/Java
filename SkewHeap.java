@@ -46,8 +46,5 @@ public class SkewHeap <V extends Comparable<V>> {
         else
             throw new IndexOutOfBoundsException("pop: Index out of bounds");
     }
-
-
-
 }
 
